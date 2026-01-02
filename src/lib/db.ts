@@ -16,12 +16,16 @@ if (!url) {
   throw new Error('FATAL: DATABASE_URL is not defined in environment variables');
 }
 
-const libsql = createClient({
+// Based on error analysis, PrismaLibSQL might expect config object or the client instance is not being read correctly.
+// Trying to pass the client instance is failing. 
+// However, standard usage is passing the client. 
+// Let's try to revert to standard usage but ensure we are using the correct import and version.
+// Actually, let's try to pass the config object if the type error suggested it expects 'Config'.
+
+const adapter = new PrismaLibSQL({
   url: url,
   authToken: authToken,
 });
-
-const adapter = new PrismaLibSQL(libsql as any);
 const prisma = new PrismaClient({ adapter });
 
 export default prisma;
