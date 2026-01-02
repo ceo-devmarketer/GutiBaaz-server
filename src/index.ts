@@ -9,12 +9,16 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*", // Allow all origins for now, restrict in production
-    methods: ["GET", "POST"]
+    origin: true, // Reflect the request origin
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
-app.use(cors());
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 app.use(express.json());
 
 app.get('/', (req, res) => {
