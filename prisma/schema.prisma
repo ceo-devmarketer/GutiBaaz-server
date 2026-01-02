@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  phone     String   @unique
+  name      String?
+  avatar    String?
+  balance   Float    @default(0.0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  transactions Transaction[]
+  gameSessions GameSession[]
+}
+
+model GameSession {
+  id        String   @id @default(uuid())
+  status    String   @default("waiting") // waiting, active, completed
+  betAmount Float
+  winnerId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  players   User[]
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  userId      String
+  amount      Float
+  type        String   // deposit, withdrawal, bet, win
+  description String?
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model BotSettings {
+  id        String   @id @default("default")
+  difficulty String  @default("medium")
+  updatedAt DateTime @updatedAt
+}
