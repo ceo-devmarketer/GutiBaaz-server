@@ -5,14 +5,19 @@ import { PrismaLibSQL } from '@prisma/adapter-libsql';
 const url = process.env.DATABASE_URL;
 const authToken = process.env.TURSO_AUTH_TOKEN;
 
-console.log('DB Config:', { 
-  url: url ? 'Set' : 'Unset', 
-  authToken: authToken ? 'Set' : 'Unset',
-  urlValue: url // Temporary log to see the value (be careful with secrets in prod, but needed for debug)
-});
+console.log('----------------------------------------');
+console.log('DEBUG: Checking Environment Variables');
+console.log('DATABASE_URL:', url ? `${url.substring(0, 10)}...` : 'UNDEFINED');
+console.log('TURSO_AUTH_TOKEN:', authToken ? 'SET' : 'UNDEFINED');
+console.log('All Env Keys:', Object.keys(process.env).join(', '));
+console.log('----------------------------------------');
+
+if (!url) {
+  throw new Error('FATAL: DATABASE_URL is not defined in environment variables');
+}
 
 const libsql = createClient({
-  url: url!,
+  url: url,
   authToken: authToken,
 });
 
